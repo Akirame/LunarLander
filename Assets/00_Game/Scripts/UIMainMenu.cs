@@ -22,5 +22,8 @@ public class UIMainMenu : MonoBehaviour {
         canvasMenu.SetActive(false);
         CanvasCredits.SetActive(true);
     }
-    
+    public void ExitGame()
+    {
+        Application.Quit();
+    }    
 }
