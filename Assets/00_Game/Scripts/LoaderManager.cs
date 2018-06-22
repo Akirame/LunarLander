@@ -15,6 +15,10 @@ public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
         SceneManager.LoadScene("LoadingScreen");
         StartCoroutine(AsynchronousLoad(sceneName));
     }
+    public void LoadSceneWithoutLoading(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
     public bool OnLevel()
     {
         currentScene = SceneManager.GetActiveScene();

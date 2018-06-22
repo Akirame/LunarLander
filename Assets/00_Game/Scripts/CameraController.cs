@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviourSingleton<CameraController> {
 
+    public int zoomOutInt = 10;
+    public int ZoomInInt = 2;
+
     private Vector3 startPos;
     private Camera cam;
 
@@ -19,14 +22,12 @@ public class CameraController : MonoBehaviourSingleton<CameraController> {
     public void ZoomIn(PlayerController p)
     {
         transform.position = new Vector3(p.transform.position.x,p.transform.position.y,transform.position.z);
-        cam.orthographicSize = 2;
-        Debug.Log("HOLA");
+        cam.orthographicSize = ZoomInInt;        
 
     }
     public void ZoomOut(PlayerController p)
     {
         transform.position = startPos;
-        cam.orthographicSize = 5;
-        Debug.Log("HOLA");
+        cam.orthographicSize = zoomOutInt;        
     }
 }
