@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
     private bool closer;
     private float maxFuel;
     private float currFuel;
+    private ParticleSystem particles;
+    private bool particlesOn;
 
     private void Start()
     {
@@ -28,13 +30,17 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
         rig.gravityScale = gravityScale;
         closer = false;
         maxFuel = 100;
-        currFuel = maxFuel;        
+        currFuel = maxFuel;
+        particles = transform.GetChild(0).transform.GetComponent<ParticleSystem>();        
+        particlesOn = false;
     }
 
     private void Update()
     {
+        particlesOn = false;
         Inputs();
         CheckRays();
+        CheckParticles();
     }
     private void CheckRays()
     {
@@ -53,11 +59,12 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
         }
     }
     private void Inputs()
-    {
+    {        
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
         {
             rig.AddForce(transform.up * verticalForce, ForceMode2D.Force);
             UpdateFuel();
+            particlesOn = true;
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
@@ -67,6 +74,13 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
         {
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - rotateForce);
         }
+    }
+    private void CheckParticles()
+    {
+        if (particlesOn)
+            particles.Play();
+        else
+            particles.Stop();
     }
     private void UpdateFuel()
     {
