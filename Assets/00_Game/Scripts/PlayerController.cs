@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviourSingleton<PlayerController> {
+public class PlayerController : MonoBehaviourSingleton<PlayerController>
+{
 
     public delegate void PlayerActions(PlayerController p);
     public static PlayerActions CloseToGround;
@@ -13,9 +14,10 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
     public float verticalForce = 1f;
     public float rotateForce = 1f;
     public float gravityScale = 0.1f;
-    public float thresholdWin = 0.05f;    
+    public float thresholdWin = 0.05f;
     public float zoomDistance;
     public float fuelBurn = 1;
+    public Vector3 offsetRayLand;
 
     private Rigidbody2D rig;
     private bool closer;
@@ -23,6 +25,8 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
     private float currFuel;
     private ParticleSystem particles;
     private bool particlesOn;
+    private float rayLandDistance;
+    private bool landOK;
 
     private void Start()
     {
@@ -31,18 +35,20 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
         closer = false;
         maxFuel = 100;
         currFuel = maxFuel;
-        particles = transform.GetChild(0).transform.GetComponent<ParticleSystem>();        
+        particles = transform.GetChild(0).transform.GetComponent<ParticleSystem>();
         particlesOn = false;
+        rayLandDistance = 0.5f;
+        landOK = false;
     }
 
     private void Update()
     {
         particlesOn = false;
         Inputs();
-        CheckRays();
+        CheckRaysZoom();
         CheckParticles();
     }
-    private void CheckRays()
+    private void CheckRaysZoom()
     {
         RaycastHit2D hit1 = Physics2D.Raycast(transform.position, -Vector2.up, zoomDistance, layers);
         RaycastHit2D hit2 = Physics2D.Raycast(transform.position, -Vector2.right, zoomDistance, layers);
@@ -58,8 +64,21 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
             closer = false;
         }
     }
+    private void CheckRaysLanding()
+    {
+        Debug.DrawRay(transform.position + offsetRayLand, -Vector2.up * zoomDistance);
+        Debug.DrawRay(transform.position - offsetRayLand, -Vector2.up);
+        RaycastHit2D hit1 = Physics2D.Raycast(transform.position + offsetRayLand, -Vector2.up, rayLandDistance, layers);
+        RaycastHit2D hit2 = Physics2D.Raycast(transform.position - offsetRayLand, -Vector2.up, rayLandDistance, layers);
+        if (hit1 && hit2)
+        {
+            landOK = true;
+        }
+        else
+            landOK = false;
+    }
     private void Inputs()
-    {        
+    {
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
         {
             rig.AddForce(transform.up * verticalForce, ForceMode2D.Force);
@@ -84,8 +103,8 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
     }
     private void UpdateFuel()
     {
-        if(currFuel > 0)
-        currFuel -= fuelBurn * Time.deltaTime;        
+        if (currFuel > 0)
+            currFuel -= fuelBurn * Time.deltaTime;
         BurnFuel(this);
     }
     public Rigidbody2D GetRigid()
@@ -93,16 +112,19 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController> {
         return GetComponent<Rigidbody2D>();
     }
     public float GetCurrFuel()
-    {                
+    {
         return (currFuel / 100);
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Tiles")
-            if (rig.velocity.y >= -thresholdWin && rig.velocity.y <= thresholdWin)
+        {
+            CheckRaysLanding();
+            if (rig.velocity.y >= -thresholdWin && rig.velocity.y <= thresholdWin && landOK)
                 Debug.Log("Win");
             else
                 Debug.Log("bum");
+        }
     }
 
 }
