@@ -9,6 +9,7 @@ public class UIGame : MonoBehaviour
     public Text altitudeText;
     public Text horizontalSpeed;
     public Text verticalSpeed;
+    public Text timeText;
 
     private Vector3 shipPos;
     private Vector2 velocities;
@@ -23,6 +24,7 @@ public class UIGame : MonoBehaviour
     {
         DrawAltitude();
         DrawVelocities();
+        DrawTime();
     }
     private void DrawVelocities()
     {
@@ -34,6 +36,10 @@ public class UIGame : MonoBehaviour
             horizontalSpeed.text = "H: " + velX.ToString("0");
             verticalSpeed.text = "V: " + velY.ToString("0");
         }
+    }
+    private void DrawTime()
+    {
+        timeText.text = GameManager.Get().GetTime().ToString("000");
     }
     private void DrawAltitude()
     {
