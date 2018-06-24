@@ -12,4 +12,8 @@ public class LandZone : MonoBehaviour {
     {
         mutiplierText.text = "x" + multiplier;
     }
+    public int GetMultiplier()
+    {
+        return multiplier;
+    }
 }

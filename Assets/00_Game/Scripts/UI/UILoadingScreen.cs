@@ -9,10 +9,13 @@ public class UILoadingScreen : MonoBehaviour
     public Text loadingText;
     public Text nextLevel;
     public Text funnyText;
+
     private bool textChange;
+    private int levelCount;
 
     public void SetVisible(bool show)
     {
+        levelCount = GameManager.Get().GetLevel();
         textChange = false;
         gameObject.SetActive(show);
     }    
@@ -28,7 +31,7 @@ public class UILoadingScreen : MonoBehaviour
         if(!textChange)
         StartCoroutine(RandomTexts());
 
-        nextLevel.text = "Next zone: ";
+        nextLevel.text = "Next zone: " + levelCount;
     }
     private IEnumerator RandomTexts()
     {        

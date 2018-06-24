@@ -10,15 +10,18 @@ public class UIGame : MonoBehaviour
     public Text horizontalSpeed;
     public Text verticalSpeed;
     public Text timeText;
+    public Text scoreText;
 
     private Vector3 shipPos;
     private Vector2 velocities;
+
     private void Start()
     {
         fuelBar.gameObject.SetActive(true);
         PlayerController.BurnFuel += DrawFuel;
         shipPos = PlayerController.Get().transform.position;
         velocities = PlayerController.Get().GetRigid().velocity;
+        GameManager.ChangeScore += DrawScore;
     }
     private void Update()
     {
@@ -53,5 +56,9 @@ public class UIGame : MonoBehaviour
     private void DrawFuel(PlayerController p)
     {
         fuelBar.fillAmount = p.GetCurrFuel();
+    }
+    private void DrawScore(int score)
+    {        
+        scoreText.text = score.ToString("000000");
     }
 }

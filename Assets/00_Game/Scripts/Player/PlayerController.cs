@@ -6,11 +6,14 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
 {
 
     public delegate void PlayerActions(PlayerController p);
+    public delegate void LandedZone(LandZone l);
     public static PlayerActions CloseToGround;
     public static PlayerActions NotCloseToGround;
     public static PlayerActions BurnFuel;
+    public static LandedZone Landed;
 
-    public LayerMask layers;
+    public LayerMask layersZoom;
+    public LayerMask layersLand;
     public float verticalForce = 1f;
     public float rotateForce = 1f;
     public float gravityScale = 0.1f;
@@ -27,6 +30,7 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     private bool particlesOn;
     private float rayLandDistance;
     private bool landOK;
+    private float actualVel;
 
     private void Start()
     {
@@ -38,11 +42,12 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
         particles = transform.GetChild(0).transform.GetComponent<ParticleSystem>();
         particlesOn = false;
         rayLandDistance = 0.5f;
-        landOK = false;
+        landOK = false;        
     }
 
     private void Update()
     {
+        actualVel = rig.velocity.y;
         particlesOn = false;
         Inputs();
         CheckRaysZoom();
@@ -50,9 +55,9 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     }
     private void CheckRaysZoom()
     {
-        RaycastHit2D hit1 = Physics2D.Raycast(transform.position, -Vector2.up, zoomDistance, layers);
-        RaycastHit2D hit2 = Physics2D.Raycast(transform.position, -Vector2.right, zoomDistance, layers);
-        RaycastHit2D hit3 = Physics2D.Raycast(transform.position, Vector2.right, zoomDistance, layers);
+        RaycastHit2D hit1 = Physics2D.Raycast(transform.position, -Vector2.up, zoomDistance, layersZoom);
+        RaycastHit2D hit2 = Physics2D.Raycast(transform.position, -Vector2.right, zoomDistance, layersZoom);
+        RaycastHit2D hit3 = Physics2D.Raycast(transform.position, Vector2.right, zoomDistance, layersZoom);
         if (hit1 || hit2 || hit3)
         {
             CloseToGround(this);
@@ -68,8 +73,8 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     {
         Debug.DrawRay(transform.position + offsetRayLand, -Vector2.up * zoomDistance);
         Debug.DrawRay(transform.position - offsetRayLand, -Vector2.up);
-        RaycastHit2D hit1 = Physics2D.Raycast(transform.position + offsetRayLand, -Vector2.up, rayLandDistance, layers);
-        RaycastHit2D hit2 = Physics2D.Raycast(transform.position - offsetRayLand, -Vector2.up, rayLandDistance, layers);
+        RaycastHit2D hit1 = Physics2D.Raycast(transform.position + offsetRayLand, -Vector2.up, rayLandDistance, layersLand);
+        RaycastHit2D hit2 = Physics2D.Raycast(transform.position - offsetRayLand, -Vector2.up, rayLandDistance, layersLand);
         if (hit1 && hit2)
         {
             landOK = true;
@@ -117,11 +122,11 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Tiles")
-        {
+        if (collision.gameObject.tag == "Tiles" || collision.gameObject.tag == "LandZone")
+        {            
             CheckRaysLanding();
-            if (rig.velocity.y >= -thresholdWin && rig.velocity.y <= thresholdWin && landOK)
-                Debug.Log("Win");
+            if (actualVel >= -thresholdWin && actualVel <= thresholdWin && landOK)
+                Landed(collision.transform.GetComponent<LandZone>());
             else
                 Debug.Log("bum");
         }
