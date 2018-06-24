@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     }
     private void Inputs()
     {
-        if (Time.timeScale != 0)
+        if (Time.timeScale != 0 && currFuel > 0)
         {
             if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
             {

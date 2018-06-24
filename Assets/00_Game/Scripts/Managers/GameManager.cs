@@ -12,17 +12,22 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     private int score;
     private float time;
     private int levelCount;
+    private bool firstLevel;
 
     private void Start()
     {
+        score = 0;
         levelCount = 1;
         time = 0;
         PlayerController.LandedSuccess += WinLevel;
         PlayerController.LandedFailed += LoseLevel;
         LoaderManager.NewLevel += RaiseLevelCount;
         LoaderManager.NewLevel += DisableLevelPrefabs;
+        LoaderManager.NewLevel += NotFirstLoad;
         LoaderManager.LoadCompleted += ActivateLevelPrefabs;
-        LoaderManager.ReturnToMainMenu += DestroyPrefabs;
+        LoaderManager.ReturnToMainMenu += ResetAll;
+        LoaderManager.ReturnToMainMenu += NotFirstLoad;
+        firstLevel = true;
     }    
     private void Update()
     {
@@ -39,10 +44,13 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
         UIManagerGame.Get().transform.gameObject.SetActive(true);
         CameraController.Get().ResetPos();
     }
-    public void DestroyPrefabs()
+    public void ResetAll()
     {
-        Destroy(PlayerController.Get().transform.gameObject);
-        Destroy(UIManagerGame.Get().transform.gameObject);
+        levelCount = 1;
+        time = 0;
+        score = 0;
+        PlayerController.Get().transform.gameObject.SetActive(false);
+        UIManagerGame.Get().transform.gameObject.SetActive(false);
         CameraController.Get().ResetPos();
     }
     public void LoseLevel(PlayerController p)
@@ -55,9 +63,20 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
         ChangeScore(this);
         LevelWin(this);
     }
+    public bool FirstLoad()
+    {        
+        if (firstLevel)
+            return true;
+        else
+            return false;
+    }
     private void RaiseLevelCount()
-    {
+    {        
         levelCount++;
+    }
+    private void NotFirstLoad()
+    {
+        firstLevel = false;
     }
     public int GetTime()
     {

@@ -26,10 +26,9 @@ public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
         ReturnToMainMenu();
         SceneManager.LoadScene("00_MainMenu");
     }
-    public void LoadNewLevel(bool _firstLevel)
-    {        
-        firstLevel = _firstLevel;
-        if(!firstLevel)
+    public void LoadNewLevel()
+    {                
+        if(!GameManager.Get().FirstLoad())
         NewLevel();
         SceneManager.LoadScene("LoadingScreen");
         string sceneName = levels[0];
@@ -54,7 +53,7 @@ public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
             // Loading completed
             if (loadingProgress >= 1)
             {
-                if (!firstLevel)
+                if (!GameManager.Get().FirstLoad())
                     LoadCompleted();
                 ao.allowSceneActivation = true;
             }

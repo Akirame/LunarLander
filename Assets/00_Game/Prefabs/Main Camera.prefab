@@ -98,3 +98,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zoomOutInt: 10
   ZoomInInt: 2
+  startPos: {x: 0, y: 9, z: -10}

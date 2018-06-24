@@ -15,7 +15,11 @@ public class UIManagerGame : MonoBehaviourSingleton<UIManagerGame> {
         GameManager.LevelWin += UpdateScoreInGame;
         GameManager.LevelWin += WinScreen;
         GameManager.LevelLose += LoseScreen;
-
+        LoaderManager.LoadCompleted += Init;
+        Init();
+    }
+    public void Init()
+    {
         UIGameCanvas.SetActive(true);
         UIPauseCanvas.SetActive(false);
         UIWin.SetActive(false);

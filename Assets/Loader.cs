@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Loader : MonoBehaviourSingleton<Loader> {
 
-    public void ChangeLevel(bool firstLevel)
+    public void ChangeLevel()
     {
-        LoaderManager.Get().LoadNewLevel(firstLevel);
+        LoaderManager.Get().LoadNewLevel();
     }
     public void ToMainMenu()
     {
