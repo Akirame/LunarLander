@@ -31,10 +31,20 @@ public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
         if(!GameManager.Get().FirstLoad())
         NewLevel();
         SceneManager.LoadScene("LoadingScreen");
-        Debug.Log(levels.Length);
         string sceneName = levels[Random.Range(0,levels.Length)];
         if(!loading)
         StartCoroutine(AsynchronousLoad(sceneName));        
+    }
+    public bool OnLevel()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        for (int i = 0; i < levels.Length; i++)
+        {
+            if (levels[i] == currentScene.name)
+                return true;
+        }
+        return false;
     }
     IEnumerator AsynchronousLoad(string scene)
     {
@@ -55,7 +65,9 @@ public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
             if (loadingProgress >= 1)
             {
                 if (!GameManager.Get().FirstLoad())
-                    LoadCompleted();                                    
+                    LoadCompleted();
+                else
+                    GameManager.Get().NotFirstLoad();
                 ao.allowSceneActivation = true;
             }
             loading = false;

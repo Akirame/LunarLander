@@ -52,7 +52,7 @@ public class UIGame : MonoBehaviour
             altitudeText.text = "Altitude: " + altitude.ToString("000") ;
         }
     }
-    private void DrawFuel(PlayerController p)
+    public void DrawFuel(PlayerController p)
     {
         fuelBar.fillAmount = p.GetCurrFuel();
     }

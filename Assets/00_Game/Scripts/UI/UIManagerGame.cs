@@ -11,10 +11,12 @@ public class UIManagerGame : MonoBehaviourSingleton<UIManagerGame> {
 
     private void Start()
     {
-        GameManager.ChangeScore += UpdateScoreInGame;
-        GameManager.LevelWin += UpdateScoreInGame;
+        GameManager.ChangeScore += UpdateDraw;
+        GameManager.LevelWin += UpdateDraw;
         GameManager.LevelWin += WinScreen;
         GameManager.LevelLose += LoseScreen;
+        GameManager.LevelLose += UpdateDraw;
+        GameManager.Reset += UpdateDraw;
         LoaderManager.LoadCompleted += Init;
         Init();
     }
@@ -49,9 +51,10 @@ public class UIManagerGame : MonoBehaviourSingleton<UIManagerGame> {
         UIGameCanvas.SetActive(false);
         UILose.SetActive(true);
     }    
-    private void UpdateScoreInGame(GameManager g)
+    private void UpdateDraw(GameManager g)
     {
         UIGameCanvas.GetComponent<UIGame>().DrawScore(g.GetScore());
+        UIGameCanvas.GetComponent<UIGame>().DrawFuel(PlayerController.Get());
     }
     public void PauseGame(bool pauseOn)
     {

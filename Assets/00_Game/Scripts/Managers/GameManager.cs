@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     public static GameManagerActions ChangeScore;
     public static GameManagerActions LevelWin;
     public static GameManagerActions LevelLose;
+    public static GameManagerActions Reset;
 
     private int score;
     private float time;
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     }    
     private void Update()
     {
+        if(LoaderManager.Get().OnLevel())
         time += Time.deltaTime;
     }
     public void DisableLevelPrefabs()
@@ -49,9 +51,11 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
         levelCount = 0;
         time = 0;
         score = 0;
+        Reset(this);
+        PlayerController.Get().ResetAll();
         PlayerController.Get().transform.gameObject.SetActive(false);
         UIManagerGame.Get().transform.gameObject.SetActive(false);
-        CameraController.Get().ResetPos();
+        CameraController.Get().ResetPos();        
     }
     public void LoseLevel(PlayerController p)
     {
