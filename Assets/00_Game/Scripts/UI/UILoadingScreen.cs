@@ -14,7 +14,7 @@ public class UILoadingScreen : MonoBehaviour
     private int levelCount;
 
     private void Start()
-    {
+    {        
         levelCount = GameManager.Get().GetLevel();
     }
     public void SetVisible(bool show)

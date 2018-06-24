@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1685176550037788}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 11.3, z: 0}
+  m_LocalPosition: {x: 0, y: 18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4414943004021432}
@@ -130,6 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc46ec226e2c1464d9e4407b05f604db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StartPos: {x: 0, y: 18, z: 0}
   layersZoom:
     serializedVersion: 2
     m_Bits: 768
@@ -143,6 +144,7 @@ MonoBehaviour:
   zoomDistance: 3
   fuelBurn: 3
   offsetRayLand: {x: 0.4, y: 0, z: 0}
+  particles: {fileID: 198186881037903422}
 --- !u!198 &198186881037903422
 ParticleSystem:
   m_ObjectHideFlags: 1

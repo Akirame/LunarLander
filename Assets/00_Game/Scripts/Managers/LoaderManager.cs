@@ -6,29 +6,39 @@ public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
 {
     public delegate void LoaderManagerActions();
     public static LoaderManagerActions NewLevel;
+    public static LoaderManagerActions LoadCompleted;
+    public static LoaderManagerActions ReturnToMainMenu;
+
     public float loadingProgress;
     public float timeLoading;
     public float minTimeToLoad = 2;
-    public string[] levels;    
+    public string[] levels;
+    private bool firstLevel;
+    private bool loading = false;
 
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene("LoadingScreen");
         StartCoroutine(AsynchronousLoad(sceneName));
     }
-    public void LoadSceneWithoutLoading(string sceneName)
+    public void LoadMainMenu()
     {
-        SceneManager.LoadScene(sceneName);
+        ReturnToMainMenu();
+        SceneManager.LoadScene("00_MainMenu");
     }
-    public void LoadNewLevel()
-    {
+    public void LoadNewLevel(bool _firstLevel)
+    {        
+        firstLevel = _firstLevel;
+        if(!firstLevel)
         NewLevel();
         SceneManager.LoadScene("LoadingScreen");
-        string sceneName = levels[Random.Range(0, levels.Length)];
-        StartCoroutine(AsynchronousLoad(sceneName));
+        string sceneName = levels[0];
+        if(!loading)
+        StartCoroutine(AsynchronousLoad(sceneName));        
     }
     IEnumerator AsynchronousLoad(string scene)
     {
+        loading = true;
         loadingProgress = 0;
         timeLoading = 0;
         yield return null;
@@ -44,9 +54,11 @@ public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
             // Loading completed
             if (loadingProgress >= 1)
             {
+                if (!firstLevel)
+                    LoadCompleted();
                 ao.allowSceneActivation = true;
             }
-
+            loading = false;
             yield return null;
         }
     }

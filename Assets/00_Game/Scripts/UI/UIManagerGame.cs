@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIManagerGame : MonoBehaviour {
+public class UIManagerGame : MonoBehaviourSingleton<UIManagerGame> {
 
     public GameObject UIGameCanvas;
     public GameObject UIPauseCanvas;
@@ -12,6 +12,7 @@ public class UIManagerGame : MonoBehaviour {
     private void Start()
     {
         GameManager.ChangeScore += UpdateScoreInGame;
+        GameManager.LevelWin += UpdateScoreInGame;
         GameManager.LevelWin += WinScreen;
         GameManager.LevelLose += LoseScreen;
 
@@ -34,23 +35,29 @@ public class UIManagerGame : MonoBehaviour {
     }
     public void WinScreen(GameManager g)
     {
+        PauseGame(true);
         UIGameCanvas.SetActive(false);
         UIWin.SetActive(true);
     }
     public void LoseScreen(GameManager g)
     {
+        PauseGame(true);
         UIGameCanvas.SetActive(false);
-        UIWin.SetActive(true);
+        UILose.SetActive(true);
     }    
     private void UpdateScoreInGame(GameManager g)
     {
         UIGameCanvas.GetComponent<UIGame>().DrawScore(g.GetScore());
     }
-    private void PauseGame(bool pauseOn)
+    public void PauseGame(bool pauseOn)
     {
         if (pauseOn)
-            Time.timeScale = 0;
+        {
+            Time.timeScale = 0;            
+        }
         else
-            Time.timeScale = 1;
+        {
+            Time.timeScale = 1;            
+        }
     }
 }

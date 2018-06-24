@@ -10,9 +10,10 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     public static PlayerActions CloseToGround;
     public static PlayerActions NotCloseToGround;
     public static PlayerActions BurnFuel;
-    public static LandedZone LandedSuccess;
     public static PlayerActions LandedFailed;
+    public static LandedZone LandedSuccess;
 
+    public Vector3 StartPos;
     public LayerMask layersZoom;
     public LayerMask layersLand;
     public float verticalForce = 1f;
@@ -22,12 +23,12 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     public float zoomDistance;
     public float fuelBurn = 1;
     public Vector3 offsetRayLand;
+    public ParticleSystem particles;
 
     private Rigidbody2D rig;
     private bool closer;
     private float maxFuel;
     private float currFuel;
-    private ParticleSystem particles;
     private bool particlesOn;
     private float rayLandDistance;
     private bool landOK;
@@ -35,17 +36,26 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
 
     private void Start()
     {
+        transform.position = StartPos;
         rig = GetComponent<Rigidbody2D>();
         rig.gravityScale = gravityScale;
         closer = false;
         maxFuel = 100;
-        currFuel = maxFuel;
-        particles = transform.GetChild(0).transform.GetComponent<ParticleSystem>();
+        currFuel = maxFuel;        
         particlesOn = false;
         rayLandDistance = 0.5f;
         landOK = false;        
     }
-
+    private void OnEnable()
+    {
+        transform.position = StartPos;
+    }
+    public void ResetAll()
+    {
+        currFuel = maxFuel;
+        particlesOn = false;
+        landOK = false;
+    }
     private void Update()
     {
         actualVel = rig.velocity.y;
@@ -85,19 +95,22 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     }
     private void Inputs()
     {
-        if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
+        if (Time.timeScale != 0)
         {
-            rig.AddForce(transform.up * verticalForce, ForceMode2D.Force);
-            UpdateFuel();
-            particlesOn = true;
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + rotateForce);
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - rotateForce);
+            if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
+            {
+                rig.AddForce(transform.up * verticalForce, ForceMode2D.Force);
+                UpdateFuel();
+                particlesOn = true;
+            }
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + rotateForce);
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - rotateForce);
+            }
         }
     }
     private void CheckParticles()
