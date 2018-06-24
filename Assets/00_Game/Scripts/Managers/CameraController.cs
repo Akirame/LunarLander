@@ -14,25 +14,29 @@ public class CameraController : MonoBehaviourSingleton<CameraController> {
     {
         transform.position = startPos;
         cam = GetComponent<Camera>();
-        
+
         PlayerController.CloseToGround += ZoomIn;
         PlayerController.NotCloseToGround += ZoomOut;
     }
 
     public void ZoomIn(PlayerController p)
     {
-        transform.position = new Vector3(p.transform.position.x,p.transform.position.y,transform.position.z);
-        cam.orthographicSize = ZoomInInt;        
+        transform.position = new Vector3(p.transform.position.x, p.transform.position.y, transform.position.z);
+        cam.orthographicSize = ZoomInInt;
 
     }
     public void ZoomOut(PlayerController p)
     {
         transform.position = startPos;
-        cam.orthographicSize = zoomOutInt;        
+        cam.orthographicSize = zoomOutInt;
     }
     public void ResetPos()
     {
         transform.position = startPos;
         cam.orthographicSize = zoomOutInt;
+    }
+    public Camera GetViewPort()
+    {
+        return cam;
     }
 }

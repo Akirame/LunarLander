@@ -33,9 +33,11 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     private float rayLandDistance;
     private bool landOK;
     private float actualVel;
+    private Camera cam;
 
     private void Start()
     {
+        cam = CameraController.Get().GetViewPort();
         transform.position = StartPos;
         rig = GetComponent<Rigidbody2D>();
         rig.gravityScale = gravityScale;
@@ -63,6 +65,16 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
         Inputs();
         CheckRaysZoom();
         CheckParticles();
+        CheckOOB();
+    }
+    private void CheckOOB()
+    {        
+        Vector3 actualPos = cam.WorldToViewportPoint(transform.position);
+        if (actualPos.x < 0f || actualPos.x > 1f)
+        {
+            transform.position = new Vector3(-transform.position.x, transform.position.y, transform.position.z);
+        }
+       
     }
     private void CheckRaysZoom()
     {
@@ -128,7 +140,7 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     }
     public Rigidbody2D GetRigid()
     {
-        return GetComponent<Rigidbody2D>();
+        return rig;
     }
     public float GetCurrFuel()
     {
