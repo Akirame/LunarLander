@@ -41,6 +41,8 @@ MonoBehaviour:
   loadingProgress: 0
   timeLoading: 0
   minTimeToLoad: 2
+  levels:
+  - 01_Level
 --- !u!224 &224749415350694178
 RectTransform:
   m_ObjectHideFlags: 1

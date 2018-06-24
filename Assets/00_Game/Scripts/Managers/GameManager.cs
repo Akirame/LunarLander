@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviourSingleton<GameManager> {
 
-    public delegate void GameManagerActions(int score);
+    public delegate void GameManagerActions(GameManager g);
     public static GameManagerActions ChangeScore;
+    public static GameManagerActions LevelWin;
+    public static GameManagerActions LevelLose;
 
     private int score;
     private float time;
@@ -13,9 +15,10 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
 
     private void Start()
     {
-        levelCount = 1;
+        levelCount = 0;
         time = 0;
-        PlayerController.Landed += AddLandScore;
+        PlayerController.LandedSuccess += AddLandScore;
+        LoaderManager.NewLevel += RaiseLevelCount;
     }
     private void Update()
     {
@@ -28,7 +31,7 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     public void AddLandScore(LandZone l)
     {                
         score += 100 * l.GetMultiplier();
-        ChangeScore(score);
+        ChangeScore(this);
     }
     public int GetLevel()
     {
@@ -37,5 +40,9 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     public int GetScore()
     {
         return score;
+    }
+    private void RaiseLevelCount()
+    {
+        levelCount++;
     }
 }

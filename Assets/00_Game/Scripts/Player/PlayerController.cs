@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     public static PlayerActions CloseToGround;
     public static PlayerActions NotCloseToGround;
     public static PlayerActions BurnFuel;
-    public static LandedZone Landed;
+    public static LandedZone LandedSuccess;
+    public static PlayerActions LandedFailed;
 
     public LayerMask layersZoom;
     public LayerMask layersLand;
@@ -122,14 +123,15 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Tiles" || collision.gameObject.tag == "LandZone")
+        if (collision.gameObject.tag == "Tiles")
+            LandedFailed(this);
+        else if(collision.gameObject.tag == "LandZone")
         {            
             CheckRaysLanding();
             if (actualVel >= -thresholdWin && actualVel <= thresholdWin && landOK)
-                Landed(collision.transform.GetComponent<LandZone>());
+                LandedSuccess(collision.transform.GetComponent<LandZone>());
             else
-                Debug.Log("bum");
+                LandedFailed(this);
         }
     }
-
 }

@@ -4,11 +4,12 @@ using UnityEngine.SceneManagement;
 
 public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
 {
+    public delegate void LoaderManagerActions();
+    public static LoaderManagerActions NewLevel;
     public float loadingProgress;
     public float timeLoading;
     public float minTimeToLoad = 2;
-
-    private Scene currentScene;
+    public string[] levels;    
 
     public void LoadScene(string sceneName)
     {
@@ -19,16 +20,12 @@ public class LoaderManager : MonoBehaviourSingleton<LoaderManager>
     {
         SceneManager.LoadScene(sceneName);
     }
-    public bool OnLevel()
+    public void LoadNewLevel()
     {
-        currentScene = SceneManager.GetActiveScene();
-
-        if (currentScene.name == "Level1" || currentScene.name == "Level2")
-        {
-            return true;
-        }
-        else
-            return false;
+        NewLevel();
+        SceneManager.LoadScene("LoadingScreen");
+        string sceneName = levels[Random.Range(0, levels.Length)];
+        StartCoroutine(AsynchronousLoad(sceneName));
     }
     IEnumerator AsynchronousLoad(string scene)
     {

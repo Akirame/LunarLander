@@ -13,9 +13,12 @@ public class UILoadingScreen : MonoBehaviour
     private bool textChange;
     private int levelCount;
 
-    public void SetVisible(bool show)
+    private void Start()
     {
         levelCount = GameManager.Get().GetLevel();
+    }
+    public void SetVisible(bool show)
+    {        
         textChange = false;
         gameObject.SetActive(show);
     }    
