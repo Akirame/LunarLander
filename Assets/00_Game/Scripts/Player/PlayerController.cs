@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     private void OnEnable()
     {
         transform.position = StartPos;
+        transform.eulerAngles = Vector3.zero;
     }
     public void ResetAll()
     {
@@ -138,9 +139,13 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
             currFuel -= fuelBurn * Time.deltaTime;
         BurnFuel(this);
     }
+    private void AddFuel()
+    {
+        currFuel += 10;
+    }
     public Rigidbody2D GetRigid()
     {
-        return rig;
+        return GetComponent<Rigidbody2D>();
     }
     public float GetCurrFuel()
     {
@@ -154,7 +159,10 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
         {            
             CheckRaysLanding();
             if (actualVel >= -thresholdWin && actualVel <= thresholdWin && landOK)
+            {
+                AddFuel();
                 LandedSuccess(collision.transform.GetComponent<LandZone>());
+            }
             else
                 LandedFailed(this);
         }

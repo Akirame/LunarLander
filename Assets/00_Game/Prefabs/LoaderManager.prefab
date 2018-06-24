@@ -56,3 +56,5 @@ MonoBehaviour:
   minTimeToLoad: 2
   levels:
   - 01_Level
+  - 02_Level
+  - 03_Level

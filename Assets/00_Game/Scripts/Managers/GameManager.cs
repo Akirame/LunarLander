@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     }
     public void ResetAll()
     {
-        levelCount = 1;
+        levelCount = 0;
         time = 0;
         score = 0;
         PlayerController.Get().transform.gameObject.SetActive(false);
@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviourSingleton<GameManager> {
     {        
         levelCount++;
     }
-    private void NotFirstLoad()
+    public void NotFirstLoad()
     {
         firstLevel = false;
     }

@@ -29,7 +29,7 @@ public class UIManagerGame : MonoBehaviourSingleton<UIManagerGame> {
     {
         PauseGame(true);
         UIGameCanvas.SetActive(false);
-        UIPauseCanvas.SetActive(true);
+        UIPauseCanvas.SetActive(true);        
     }
     public void ResumeGame()
     {
