@@ -37,11 +37,11 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     private bool particlesOn;
     private Camera cam;
     private bool transitionOn = false;
-    private AudioSource audio;
+    private AudioSource audioSource;
 
     private void Start()
-    {
-        audio = GetComponent<AudioSource>();
+    {        
+        audioSource = GetComponent<AudioSource>();
         cam = CameraController.Get().GetViewPort();
         transform.position = StartPos;
         rig = GetComponent<Rigidbody2D>();
@@ -118,14 +118,14 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
         {
             if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
             {
-                if (!audio.isPlaying)
-                    audio.Play();
+                if (!audioSource.isPlaying)
+                    audioSource.Play();
                 rig.AddForce(transform.up * verticalForce, ForceMode2D.Force);
                 UpdateFuel();
                 particlesOn = true;
             }
-            else if (audio.isPlaying)
-                audio.Stop();
+            else if (audioSource.isPlaying)
+                audioSource.Stop();
 
             if (Input.GetKey(KeyCode.LeftArrow))
             {

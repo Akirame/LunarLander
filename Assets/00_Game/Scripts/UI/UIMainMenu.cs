@@ -23,7 +23,7 @@ public class UIMainMenu : MonoBehaviour {
         CanvasCredits.SetActive(true);
     }
     public void ExitGame()
-    {
+    {        
         Application.Quit();
     }    
 }
