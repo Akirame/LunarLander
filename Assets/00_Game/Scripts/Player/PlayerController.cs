@@ -19,34 +19,40 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     public float verticalForce = 1f;
     public float rotateForce = 1f;
     public float gravityScale = 0.1f;
-    public float thresholdWin = 0.05f;
+    public float thresholdWin = 0.05f;    
     public float zoomDistance;
     public float fuelBurn = 1;
-    public Vector3 offsetRayLand;
     public ParticleSystem particles;
 
     private Rigidbody2D rig;
-    private bool closer;
-    private float maxFuel;
-    private float currFuel;
-    private bool particlesOn;
+    private float actualVel;
+
+    private bool closerToGround;    
     private float rayLandDistance;
     private bool landOK;
-    private float actualVel;
+
+    private float maxFuel;
+    private float currFuel;
+
+    private bool particlesOn;
     private Camera cam;
+    private bool transitionOn = false;
+    private AudioSource audio;
 
     private void Start()
     {
+        audio = GetComponent<AudioSource>();
         cam = CameraController.Get().GetViewPort();
         transform.position = StartPos;
         rig = GetComponent<Rigidbody2D>();
         rig.gravityScale = gravityScale;
-        closer = false;
         maxFuel = 100;
-        currFuel = maxFuel;        
+        currFuel = maxFuel;
+        closerToGround = false;        
+        rayLandDistance = 0.51f;
+        landOK = false;
+        transitionOn = false;
         particlesOn = false;
-        rayLandDistance = 0.5f;
-        landOK = false;        
     }
     private void OnEnable()
     {
@@ -69,13 +75,16 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
         CheckOOB();
     }
     private void CheckOOB()
-    {        
+    {
         Vector3 actualPos = cam.WorldToViewportPoint(transform.position);
-        if (actualPos.x < 0f || actualPos.x > 1f)
+        if (actualPos.x < 0f || actualPos.x > 1f && !transitionOn)
         {
             transform.position = new Vector3(-transform.position.x, transform.position.y, transform.position.z);
+            transitionOn = true;
         }
-       
+        else
+            transitionOn = false;
+
     }
     private void CheckRaysZoom()
     {
@@ -85,21 +94,18 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
         if (hit1 || hit2 || hit3)
         {
             CloseToGround(this);
-            closer = true;
+            closerToGround = true;
         }
-        else if (closer)
+        else if (closerToGround)
         {
             NotCloseToGround(this);
-            closer = false;
+            closerToGround = false;
         }
     }
     private void CheckRaysLanding()
     {
-        Debug.DrawRay(transform.position + offsetRayLand, -Vector2.up * zoomDistance);
-        Debug.DrawRay(transform.position - offsetRayLand, -Vector2.up);
-        RaycastHit2D hit1 = Physics2D.Raycast(transform.position + offsetRayLand, -Vector2.up, rayLandDistance, layersLand);
-        RaycastHit2D hit2 = Physics2D.Raycast(transform.position - offsetRayLand, -Vector2.up, rayLandDistance, layersLand);
-        if (hit1 && hit2)
+        RaycastHit2D hit1 = Physics2D.Raycast(transform.position, -transform.up, rayLandDistance, layersLand);
+        if (hit1)
         {
             landOK = true;
         }
@@ -112,10 +118,15 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
         {
             if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
             {
+                if (!audio.isPlaying)
+                    audio.Play();
                 rig.AddForce(transform.up * verticalForce, ForceMode2D.Force);
                 UpdateFuel();
                 particlesOn = true;
             }
+            else if (audio.isPlaying)
+                audio.Stop();
+
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + rotateForce);
@@ -155,8 +166,8 @@ public class PlayerController : MonoBehaviourSingleton<PlayerController>
     {
         if (collision.gameObject.tag == "Tiles")
             LandedFailed(this);
-        else if(collision.gameObject.tag == "LandZone")
-        {            
+        else if (collision.gameObject.tag == "LandZone")
+        {
             CheckRaysLanding();
             if (actualVel >= -thresholdWin && actualVel <= thresholdWin && landOK)
             {
